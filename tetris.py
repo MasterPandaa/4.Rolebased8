@@ -1,5 +1,6 @@
-import sys
 import random
+import sys
+
 import pygame
 from pygame import Rect
 
@@ -19,18 +20,18 @@ WHITE = (220, 220, 220)
 
 # Warna masing-masing piece
 COLORS = {
-    'I': (0, 240, 240),
-    'J': (0, 0, 240),
-    'L': (240, 160, 0),
-    'O': (240, 240, 0),
-    'S': (0, 240, 0),
-    'T': (160, 0, 240),
-    'Z': (240, 0, 0),
+    "I": (0, 240, 240),
+    "J": (0, 0, 240),
+    "L": (240, 160, 0),
+    "O": (240, 240, 0),
+    "S": (0, 240, 0),
+    "T": (160, 0, 240),
+    "Z": (240, 0, 0),
 }
 
 # Bentuk Tetris: representasi rotasi dalam grid string
 SHAPES = {
-    'I': [
+    "I": [
         [
             "....",
             "....",
@@ -56,7 +57,7 @@ SHAPES = {
             ".#..",
         ],
     ],
-    'J': [
+    "J": [
         [
             "#..",
             "###",
@@ -78,7 +79,7 @@ SHAPES = {
             "##.",
         ],
     ],
-    'L': [
+    "L": [
         [
             "..#",
             "###",
@@ -100,7 +101,7 @@ SHAPES = {
             ".#.",
         ],
     ],
-    'O': [
+    "O": [
         [
             ".##.",
             ".##.",
@@ -126,7 +127,7 @@ SHAPES = {
             "....",
         ],
     ],
-    'S': [
+    "S": [
         [
             ".##",
             "##.",
@@ -148,7 +149,7 @@ SHAPES = {
             ".#.",
         ],
     ],
-    'T': [
+    "T": [
         [
             ".#.",
             "###",
@@ -170,7 +171,7 @@ SHAPES = {
             ".#.",
         ],
     ],
-    'Z': [
+    "Z": [
         [
             "##.",
             ".##",
@@ -196,13 +197,13 @@ SHAPES = {
 
 # Ukuran box visual untuk spawn/preview
 SHAPE_BOX_SIZE = {
-    'I': 4,
-    'O': 4,
-    'J': 3,
-    'L': 3,
-    'S': 3,
-    'T': 3,
-    'Z': 3,
+    "I": 4,
+    "O": 4,
+    "J": 3,
+    "L": 3,
+    "S": 3,
+    "T": 3,
+    "Z": 3,
 }
 
 # Skor
@@ -213,8 +214,8 @@ SCORES = {
     4: 800,  # Tetris
 }
 
-SOFT_DROP_BONUS = 1      # per cell
-HARD_DROP_BONUS = 2      # per cell
+SOFT_DROP_BONUS = 1  # per cell
+HARD_DROP_BONUS = 2  # per cell
 
 LINES_PER_LEVEL = 10
 
@@ -237,7 +238,7 @@ class Piece:
         for r in range(len(pattern)):
             row = pattern[r]
             for c in range(len(row)):
-                if row[c] == '#':
+                if row[c] == "#":
                     cells.append((self.x + c, self.y + r))
         return cells
 
@@ -263,7 +264,9 @@ class Board:
     def __init__(self, cols: int, rows: int):
         self.cols = cols
         self.rows = rows
-        self.grid = [[None for _ in range(cols)] for _ in range(rows)]  # None atau (r, g, b)
+        self.grid = [
+            [None for _ in range(cols)] for _ in range(rows)
+        ]  # None atau (r, g, b)
         self.score = 0
         self.lines_cleared = 0
         self.level = 1
@@ -336,12 +339,13 @@ class BagGenerator:
     """
     7-bag random generator agar distribusi adil.
     """
+
     def __init__(self):
         self.bag = []
 
     def next_piece_kind(self):
         if not self.bag:
-            self.bag = ['I', 'J', 'L', 'O', 'S', 'T', 'Z']
+            self.bag = ["I", "J", "L", "O", "S", "T", "Z"]
             random.shuffle(self.bag)
         return self.bag.pop()
 
@@ -368,7 +372,9 @@ def draw_board(surface, board: Board, origin_x, origin_y):
             cell_y = origin_y + r * CELL_SIZE
             col = board.grid[r][c]
             if col is None:
-                pygame.draw.rect(surface, GRAY, (cell_x, cell_y, CELL_SIZE, CELL_SIZE), 1)
+                pygame.draw.rect(
+                    surface, GRAY, (cell_x, cell_y, CELL_SIZE, CELL_SIZE), 1
+                )
             else:
                 draw_cell(surface, cell_x, cell_y, col, outline=True)
 
@@ -411,7 +417,7 @@ def draw_mini_shape(surface, kind, x, y):
     cell = max(12, CELL_SIZE // 2)
     for r in range(len(pattern)):
         for c in range(len(pattern[r])):
-            if pattern[r][c] == '#':
+            if pattern[r][c] == "#":
                 px = x + c * cell
                 py = y + r * cell
                 rect = Rect(px, py, cell, cell)
@@ -419,22 +425,33 @@ def draw_mini_shape(surface, kind, x, y):
                 pygame.draw.rect(surface, GRAY_DARK, rect, 1)
 
 
-def draw_ui(surface, font, big_font, board: Board, base_x, base_y, elapsed_ms, paused, game_over):
+def draw_ui(
+    surface, font, big_font, board: Board, base_x, base_y, elapsed_ms, paused, game_over
+):
     y = base_y
     title = big_font.render("TETRIS", True, WHITE)
     surface.blit(title, (base_x, y))
     y += 45
-    surface.blit(font.render(f"Score: {board.score}", True, WHITE), (base_x, y)); y += 24
-    surface.blit(font.render(f"Lines: {board.lines_cleared}", True, WHITE), (base_x, y)); y += 24
-    surface.blit(font.render(f"Level: {board.level}", True, WHITE), (base_x, y)); y += 24
+    surface.blit(font.render(f"Score: {board.score}", True, WHITE), (base_x, y))
+    y += 24
+    surface.blit(font.render(f"Lines: {board.lines_cleared}", True, WHITE), (base_x, y))
+    y += 24
+    surface.blit(font.render(f"Level: {board.level}", True, WHITE), (base_x, y))
+    y += 24
 
     y += 10
-    surface.blit(font.render("[Left/Right] Move", True, WHITE), (base_x, y)); y += 20
-    surface.blit(font.render("[Down] Soft Drop", True, WHITE), (base_x, y)); y += 20
-    surface.blit(font.render("[Space] Hard Drop", True, WHITE), (base_x, y)); y += 20
-    surface.blit(font.render("[Z/X/Up] Rotate", True, WHITE), (base_x, y)); y += 20
-    surface.blit(font.render("[P] Pause, [R] Restart", True, WHITE), (base_x, y)); y += 20
-    surface.blit(font.render("[Esc] Quit", True, WHITE), (base_x, y)); y += 20
+    surface.blit(font.render("[Left/Right] Move", True, WHITE), (base_x, y))
+    y += 20
+    surface.blit(font.render("[Down] Soft Drop", True, WHITE), (base_x, y))
+    y += 20
+    surface.blit(font.render("[Space] Hard Drop", True, WHITE), (base_x, y))
+    y += 20
+    surface.blit(font.render("[Z/X/Up] Rotate", True, WHITE), (base_x, y))
+    y += 20
+    surface.blit(font.render("[P] Pause, [R] Restart", True, WHITE), (base_x, y))
+    y += 20
+    surface.blit(font.render("[Esc] Quit", True, WHITE), (base_x, y))
+    y += 20
 
     if paused and not game_over:
         msg = big_font.render("PAUSED", True, (255, 220, 80))
@@ -525,7 +542,17 @@ def main():
                     drop_cooldown = 0
 
         if paused or game_over:
-            render(screen, board, active, next_queue, font, big_font, elapsed_total, paused, game_over)
+            render(
+                screen,
+                board,
+                active,
+                next_queue,
+                font,
+                big_font,
+                elapsed_total,
+                paused,
+                game_over,
+            )
             continue
 
         keys = pygame.key.get_pressed()
@@ -615,10 +642,22 @@ def main():
             lock_timer = 0
             on_ground = False
 
-        render(screen, board, active, next_queue, font, big_font, elapsed_total, paused, game_over)
+        render(
+            screen,
+            board,
+            active,
+            next_queue,
+            font,
+            big_font,
+            elapsed_total,
+            paused,
+            game_over,
+        )
 
 
-def render(screen, board, active, next_queue, font, big_font, elapsed_ms, paused, game_over):
+def render(
+    screen, board, active, next_queue, font, big_font, elapsed_ms, paused, game_over
+):
     screen.fill(GRAY_DARK)
 
     board_px_w = COLS * CELL_SIZE
@@ -631,7 +670,9 @@ def render(screen, board, active, next_queue, font, big_font, elapsed_ms, paused
     side_oy = BORDER
 
     # Board panel background
-    pygame.draw.rect(screen, GRAY, (board_ox - 2, board_oy - 2, board_px_w + 4, board_px_h + 4), 2)
+    pygame.draw.rect(
+        screen, GRAY, (board_ox - 2, board_oy - 2, board_px_w + 4, board_px_h + 4), 2
+    )
 
     draw_board(screen, board, board_ox, board_oy)
 
@@ -644,8 +685,20 @@ def render(screen, board, active, next_queue, font, big_font, elapsed_ms, paused
         draw_piece(screen, active, board_ox, board_oy, alpha=255)
 
     # Side panel
-    pygame.draw.rect(screen, GRAY, (side_ox - 2, side_oy - 2, side_px_w + 4, board_px_h + 4), 2)
-    draw_ui(screen, font, big_font, board, side_ox + 10, side_oy + 10, elapsed_ms, paused, game_over)
+    pygame.draw.rect(
+        screen, GRAY, (side_ox - 2, side_oy - 2, side_px_w + 4, board_px_h + 4), 2
+    )
+    draw_ui(
+        screen,
+        font,
+        big_font,
+        board,
+        side_ox + 10,
+        side_oy + 10,
+        elapsed_ms,
+        paused,
+        game_over,
+    )
 
     # Next queue
     draw_next_queue(screen, next_queue, font, side_ox + 10, side_oy + 200)
